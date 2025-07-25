@@ -96,7 +96,7 @@ const Hero = () => {
           </div>
 
           {/* Right Content — Phone Image */}
-          <div className="flex-1 flex justify-center lg:justify-end scroll-reveal"style={{animationDelay: "0.3s", paddingRight: "100px",  }}>
+          <div className="flex-1 flex justify-center lg:justify-end scroll-reveal"style={{animationDelay: "0.3s", paddingRight: "80px",  }}>
 
             <div className="relative group">
               {/* Glow background */}
