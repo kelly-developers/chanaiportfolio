@@ -12,45 +12,59 @@ const Hero = () => {
     subtitle: "",
     description: ""
   });
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentTextIndex, setCurrentTextIndex] = useState(0);
+  const [currentCharIndex, setCurrentCharIndex] = useState(0);
+  const [isTyping, setIsTyping] = useState(true);
   
-  const fullText = {
-    title: "Hi, I'm Kelly Nyachiro",
-    subtitle: "Computer Science Graduate & Software Developer",
-    description: "Passionate about creating innovative solutions with expertise in Python, JavaScript, and web development. Ready to contribute to fintech and IT-driven companies."
-  };
+  const textToType = [
+    { 
+      key: "title", 
+      text: "Hi, I'm Kelly Nyachiro",
+      speed: 80
+    },
+    { 
+      key: "subtitle", 
+      text: "Computer Science Graduate & Software Developer",
+      speed: 50
+    },
+    { 
+      key: "description", 
+      text: "Passionate about creating innovative solutions with expertise in Python, JavaScript, and web development. Ready to contribute to fintech and IT-driven companies.",
+      speed: 30
+    }
+  ];
 
   const scrollToSection = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
 
   useEffect(() => {
-    const textToType = [
-      { key: "title", text: fullText.title },
-      { key: "subtitle", text: fullText.subtitle },
-      { key: "description", text: fullText.description }
-    ];
+    if (!isTyping) return;
 
-    if (currentIndex < textToType.length) {
-      const currentItem = textToType[currentIndex];
-      let charIndex = 0;
-      
-      const timer = setInterval(() => {
-        if (charIndex <= currentItem.text.length) {
-          setDisplayedTexts(prev => ({
-            ...prev,
-            [currentItem.key]: currentItem.text.substring(0, charIndex)
-          }));
-          charIndex++;
-        } else {
-          clearInterval(timer);
-          setCurrentIndex(prev => prev + 1);
-        }
-      }, 50); // Typing speed
+    const currentText = textToType[currentTextIndex];
+    
+    if (currentCharIndex < currentText.text.length) {
+      const timer = setTimeout(() => {
+        setDisplayedTexts(prev => ({
+          ...prev,
+          [currentText.key]: currentText.text.substring(0, currentCharIndex + 1)
+        }));
+        setCurrentCharIndex(prev => prev + 1);
+      }, currentText.speed);
 
-      return () => clearInterval(timer);
+      return () => clearTimeout(timer);
+    } else if (currentTextIndex < textToType.length - 1) {
+      // Move to next text after a pause
+      const timer = setTimeout(() => {
+        setCurrentTextIndex(prev => prev + 1);
+        setCurrentCharIndex(0);
+      }, 500); // Pause between texts
+
+      return () => clearTimeout(timer);
+    } else {
+      setIsTyping(false);
     }
-  }, [currentIndex, fullText]);
+  }, [currentTextIndex, currentCharIndex, isTyping, textToType]);
 
   return (
     <section className="min-h-screen flex items-center justify-center relative overflow-hidden bg-background dark:bg-gradient-to-br dark:from-background dark:via-background/50 dark:to-background">
@@ -93,14 +107,14 @@ const Hero = () => {
             {/* Title with typing effect */}
             <h1 className="text-5xl lg:text-7xl font-bold text-foreground mb-6 leading-tight">
               {displayedTexts.title}
-              {currentIndex === 0 && <span className="neon-text blinking-cursor">|</span>}
+              {isTyping && currentTextIndex === 0 && <span className="neon-text blinking-cursor">|</span>}
             </h1>
             
             {/* Subtitle with typing effect */}
             <p className="text-xl lg:text-2xl text-muted-foreground mb-4 font-medium">
               {displayedTexts.subtitle}
-              {currentIndex === 1 && <span className="blinking-cursor">|</span>}
-              {currentIndex > 1 && (
+              {isTyping && currentTextIndex === 1 && <span className="blinking-cursor">|</span>}
+              {!isTyping && (
                 <>
                   {" "}
                   <span className="text-neon-cyan">Software Developer</span>
@@ -111,7 +125,7 @@ const Hero = () => {
             {/* Description with typing effect */}
             <p className="text-lg text-muted-foreground mb-8 max-w-2xl leading-relaxed">
               {displayedTexts.description}
-              {currentIndex === 2 && <span className="blinking-cursor">|</span>}
+              {isTyping && currentTextIndex === 2 && <span className="blinking-cursor">|</span>}
             </p>
 
             {/* Contact Info */}
@@ -212,18 +226,6 @@ const Hero = () => {
           </button>
         </div>
       </div>
-      
-      <style jsx>{`
-        .blinking-cursor {
-          animation: blink 1s step-end infinite;
-          color: #0ff;
-        }
-        
-        @keyframes blink {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0; }
-        }
-      `}</style>
     </section>
   );
 };
