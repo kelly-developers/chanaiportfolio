@@ -7,55 +7,50 @@ import { PhoneAvatar, PhoneAvatarImage } from "@/components/ui/phone-avatar";
 import { useEffect, useState } from "react";
 
 const Hero = () => {
-  const [displayText, setDisplayText] = useState("");
+  const [displayedTexts, setDisplayedTexts] = useState({
+    title: "",
+    subtitle: "",
+    description: ""
+  });
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [loopNum, setLoopNum] = useState(0);
   
-  const fullText = [
-    "Hi, I'm Kelly Nyachiro",
-    "Computer Science Graduate & Software Developer",
-    "Passionate about creating innovative solutions with expertise in Python, JavaScript, and web development. Ready to contribute to fintech and IT-driven companies."
-  ];
+  const fullText = {
+    title: "Hi, I'm Kelly Nyachiro",
+    subtitle: "Computer Science Graduate & Software Developer",
+    description: "Passionate about creating innovative solutions with expertise in Python, JavaScript, and web development. Ready to contribute to fintech and IT-driven companies."
+  };
 
   const scrollToSection = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
 
   useEffect(() => {
-    const currentText = fullText[loopNum % fullText.length];
-    
-    const timer = setTimeout(() => {
-      if (isDeleting) {
-        setDisplayText(currentText.substring(0, currentIndex - 1));
-        setCurrentIndex(prev => prev - 1);
-      } else {
-        setDisplayText(currentText.substring(0, currentIndex + 1));
-        setCurrentIndex(prev => prev + 1);
-      }
+    const textToType = [
+      { key: "title", text: fullText.title },
+      { key: "subtitle", text: fullText.subtitle },
+      { key: "description", text: fullText.description }
+    ];
 
-      // Typing speed
-      let typeSpeed = 100;
+    if (currentIndex < textToType.length) {
+      const currentItem = textToType[currentIndex];
+      let charIndex = 0;
       
-      if (isDeleting) {
-        typeSpeed /= 2;
-      }
-      
-      // If text is complete
-      if (!isDeleting && currentIndex === currentText.length) {
-        typeSpeed = 2000; // Pause at end
-        setIsDeleting(true);
-      } else if (isDeleting && currentIndex === 0) {
-        setIsDeleting(false);
-        setLoopNum(prev => prev + 1);
-        typeSpeed = 500;
-      }
+      const timer = setInterval(() => {
+        if (charIndex <= currentItem.text.length) {
+          setDisplayedTexts(prev => ({
+            ...prev,
+            [currentItem.key]: currentItem.text.substring(0, charIndex)
+          }));
+          charIndex++;
+        } else {
+          clearInterval(timer);
+          setCurrentIndex(prev => prev + 1);
+        }
+      }, 50); // Typing speed
 
-      setTimeout(() => {}, typeSpeed);
-    }, isDeleting ? 50 : 100);
-
-    return () => clearTimeout(timer);
-  }, [currentIndex, isDeleting, loopNum, fullText]);
+      return () => clearInterval(timer);
+    }
+  }, [currentIndex, fullText]);
 
   return (
     <section className="min-h-screen flex items-center justify-center relative overflow-hidden bg-background dark:bg-gradient-to-br dark:from-background dark:via-background/50 dark:to-background">
@@ -95,45 +90,28 @@ const Hero = () => {
               </span>
             </div>
             
-            {/* Typing animation for the main heading */}
-            <h1 className="text-5xl lg:text-7xl font-bold text-foreground mb-6 leading-tight min-h-[4.5rem] lg:min-h-[6.5rem]">
-              {loopNum % 3 === 0 ? (
-                <>
-                  {displayText}
-                  <span className="neon-text blinking-cursor">|</span>
-                </>
-              ) : (
-                <>
-                  Hi, I'm <span className="neon-text">Kelly Nyachiro</span>
-                </>
-              )}
+            {/* Title with typing effect */}
+            <h1 className="text-5xl lg:text-7xl font-bold text-foreground mb-6 leading-tight">
+              {displayedTexts.title}
+              {currentIndex === 0 && <span className="neon-text blinking-cursor">|</span>}
             </h1>
             
-            {/* Typing animation for the subtitle */}
-            <p className="text-xl lg:text-2xl text-muted-foreground mb-4 font-medium min-h-[2rem] lg:min-h-[2.5rem]">
-              {loopNum % 3 === 1 ? (
+            {/* Subtitle with typing effect */}
+            <p className="text-xl lg:text-2xl text-muted-foreground mb-4 font-medium">
+              {displayedTexts.subtitle}
+              {currentIndex === 1 && <span className="blinking-cursor">|</span>}
+              {currentIndex > 1 && (
                 <>
-                  {displayText}
-                  <span className="blinking-cursor">|</span>
-                </>
-              ) : (
-                <>
-                  Computer Science Graduate &{" "}
+                  {" "}
                   <span className="text-neon-cyan">Software Developer</span>
                 </>
               )}
             </p>
             
-            {/* Typing animation for the description */}
-            <p className="text-lg text-muted-foreground mb-8 max-w-2xl leading-relaxed min-h-[6rem]">
-              {loopNum % 3 === 2 ? (
-                <>
-                  {displayText}
-                  <span className="blinking-cursor">|</span>
-                </>
-              ) : (
-                "Passionate about creating innovative solutions with expertise in Python, JavaScript, and web development. Ready to contribute to fintech and IT-driven companies."
-              )}
+            {/* Description with typing effect */}
+            <p className="text-lg text-muted-foreground mb-8 max-w-2xl leading-relaxed">
+              {displayedTexts.description}
+              {currentIndex === 2 && <span className="blinking-cursor">|</span>}
             </p>
 
             {/* Contact Info */}
