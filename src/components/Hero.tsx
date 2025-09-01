@@ -24,7 +24,7 @@ const Hero = () => {
     },
     { 
       key: "subtitle", 
-      text: "Computer Science Graduate & Software Developer",
+      text: "Computer Science Graduate & ",
       speed: 50
     },
     { 
@@ -106,20 +106,20 @@ const Hero = () => {
             
             {/* Title with typing effect */}
             <h1 className="text-5xl lg:text-7xl font-bold text-foreground mb-6 leading-tight">
-              {displayedTexts.title}
+              {displayedTexts.title || "Hi, I'm "}
+              {displayedTexts.title && (
+                <span className="neon-text">Kelly Nyachiro</span>
+              )}
               {isTyping && currentTextIndex === 0 && <span className="neon-text blinking-cursor">|</span>}
             </h1>
             
             {/* Subtitle with typing effect */}
             <p className="text-xl lg:text-2xl text-muted-foreground mb-4 font-medium">
               {displayedTexts.subtitle}
-              {isTyping && currentTextIndex === 1 && <span className="blinking-cursor">|</span>}
-              {!isTyping && (
-                <>
-                  {" "}
-                  <span className="text-neon-cyan">Software Developer</span>
-                </>
+              {displayedTexts.subtitle && (
+                <span className="text-neon-cyan">Software Developer</span>
               )}
+              {isTyping && currentTextIndex === 1 && <span className="blinking-cursor">|</span>}
             </p>
             
             {/* Description with typing effect */}
