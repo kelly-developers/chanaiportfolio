@@ -4,67 +4,11 @@ import { Button } from "@/components/ui/button";
 import { ArrowDown, Github, Linkedin, Mail, Phone } from "lucide-react";
 import profileImage from "@/assets/kelly-profile.jpg";
 import { PhoneAvatar, PhoneAvatarImage } from "@/components/ui/phone-avatar";
-import { useEffect, useState } from "react";
 
 const Hero = () => {
-  const [displayedTexts, setDisplayedTexts] = useState({
-    title: "",
-    subtitle: "",
-    description: ""
-  });
-  const [currentTextIndex, setCurrentTextIndex] = useState(0);
-  const [currentCharIndex, setCurrentCharIndex] = useState(0);
-  const [isTyping, setIsTyping] = useState(true);
-  
-  const textToType = [
-    { 
-      key: "title", 
-      text: "Hi, I'm Kelly Nyachiro",
-      speed: 80
-    },
-    { 
-      key: "subtitle", 
-      text: "Computer Science Graduate & ",
-      speed: 50
-    },
-    { 
-      key: "description", 
-      text: "Passionate about creating innovative solutions with expertise in Python, JavaScript, and web development. Ready to contribute to fintech and IT-driven companies.",
-      speed: 30
-    }
-  ];
-
   const scrollToSection = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
-
-  useEffect(() => {
-    if (!isTyping) return;
-
-    const currentText = textToType[currentTextIndex];
-    
-    if (currentCharIndex < currentText.text.length) {
-      const timer = setTimeout(() => {
-        setDisplayedTexts(prev => ({
-          ...prev,
-          [currentText.key]: currentText.text.substring(0, currentCharIndex + 1)
-        }));
-        setCurrentCharIndex(prev => prev + 1);
-      }, currentText.speed);
-
-      return () => clearTimeout(timer);
-    } else if (currentTextIndex < textToType.length - 1) {
-      // Move to next text after a pause
-      const timer = setTimeout(() => {
-        setCurrentTextIndex(prev => prev + 1);
-        setCurrentCharIndex(0);
-      }, 500); // Pause between texts
-
-      return () => clearTimeout(timer);
-    } else {
-      setIsTyping(false);
-    }
-  }, [currentTextIndex, currentCharIndex, isTyping, textToType]);
 
   return (
     <section className="min-h-screen flex items-center justify-center relative overflow-hidden bg-background dark:bg-gradient-to-br dark:from-background dark:via-background/50 dark:to-background">
@@ -103,29 +47,17 @@ const Hero = () => {
                 🎯 Available for Opportunities
               </span>
             </div>
-            
-            {/* Title with typing effect */}
             <h1 className="text-5xl lg:text-7xl font-bold text-foreground mb-6 leading-tight">
-              {displayedTexts.title || "Hi, I'm "}
-              {displayedTexts.title && (
-                <span className="neon-text">Kelly Nyachiro</span>
-              )}
-              {isTyping && currentTextIndex === 0 && <span className="neon-text blinking-cursor">|</span>}
+              Hi, I'm <span className="neon-text">Kelly Nyachiro</span>
             </h1>
-            
-            {/* Subtitle with typing effect */}
             <p className="text-xl lg:text-2xl text-muted-foreground mb-4 font-medium">
-              {displayedTexts.subtitle}
-              {displayedTexts.subtitle && (
-                <span className="text-neon-cyan">Software Developer</span>
-              )}
-              {isTyping && currentTextIndex === 1 && <span className="blinking-cursor">|</span>}
+              Computer Science Graduate &{" "}
+              <span className="text-neon-cyan">Software Developer</span>
             </p>
-            
-            {/* Description with typing effect */}
             <p className="text-lg text-muted-foreground mb-8 max-w-2xl leading-relaxed">
-              {displayedTexts.description}
-              {isTyping && currentTextIndex === 2 && <span className="blinking-cursor">|</span>}
+              Passionate about creating innovative solutions with expertise in
+              Python, JavaScript, and web development. Ready to contribute to
+              fintech and IT-driven companies.
             </p>
 
             {/* Contact Info */}
@@ -164,7 +96,7 @@ const Hero = () => {
           </div>
 
           {/* Right Content — Phone Image */}
-          <div className="flex-1 flex justify-center lg:justify-end scroll-reveal" style={{animationDelay: "0.3s" }}>
+          <div className="flex-1 flex justify-center lg:justify-end scroll-reveal"style={{animationDelay: "0.3s" }}>
 
             <div className="relative group">
               {/* Glow background */}
