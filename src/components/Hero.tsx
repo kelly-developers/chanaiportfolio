@@ -4,11 +4,58 @@ import { Button } from "@/components/ui/button";
 import { ArrowDown, Github, Linkedin, Mail, Phone } from "lucide-react";
 import profileImage from "@/assets/kelly-profile.jpg";
 import { PhoneAvatar, PhoneAvatarImage } from "@/components/ui/phone-avatar";
+import { useEffect, useState } from "react";
 
 const Hero = () => {
+  const [displayText, setDisplayText] = useState("");
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [loopNum, setLoopNum] = useState(0);
+  
+  const fullText = [
+    "Hi, I'm Kelly Nyachiro",
+    "Computer Science Graduate & Software Developer",
+    "Passionate about creating innovative solutions with expertise in Python, JavaScript, and web development. Ready to contribute to fintech and IT-driven companies."
+  ];
+
   const scrollToSection = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
+
+  useEffect(() => {
+    const currentText = fullText[loopNum % fullText.length];
+    
+    const timer = setTimeout(() => {
+      if (isDeleting) {
+        setDisplayText(currentText.substring(0, currentIndex - 1));
+        setCurrentIndex(prev => prev - 1);
+      } else {
+        setDisplayText(currentText.substring(0, currentIndex + 1));
+        setCurrentIndex(prev => prev + 1);
+      }
+
+      // Typing speed
+      let typeSpeed = 100;
+      
+      if (isDeleting) {
+        typeSpeed /= 2;
+      }
+      
+      // If text is complete
+      if (!isDeleting && currentIndex === currentText.length) {
+        typeSpeed = 2000; // Pause at end
+        setIsDeleting(true);
+      } else if (isDeleting && currentIndex === 0) {
+        setIsDeleting(false);
+        setLoopNum(prev => prev + 1);
+        typeSpeed = 500;
+      }
+
+      setTimeout(() => {}, typeSpeed);
+    }, isDeleting ? 50 : 100);
+
+    return () => clearTimeout(timer);
+  }, [currentIndex, isDeleting, loopNum, fullText]);
 
   return (
     <section className="min-h-screen flex items-center justify-center relative overflow-hidden bg-background dark:bg-gradient-to-br dark:from-background dark:via-background/50 dark:to-background">
@@ -47,17 +94,46 @@ const Hero = () => {
                 🎯 Available for Opportunities
               </span>
             </div>
-            <h1 className="text-5xl lg:text-7xl font-bold text-foreground mb-6 leading-tight">
-              Hi, I'm <span className="neon-text">Kelly Nyachiro</span>
+            
+            {/* Typing animation for the main heading */}
+            <h1 className="text-5xl lg:text-7xl font-bold text-foreground mb-6 leading-tight min-h-[4.5rem] lg:min-h-[6.5rem]">
+              {loopNum % 3 === 0 ? (
+                <>
+                  {displayText}
+                  <span className="neon-text blinking-cursor">|</span>
+                </>
+              ) : (
+                <>
+                  Hi, I'm <span className="neon-text">Kelly Nyachiro</span>
+                </>
+              )}
             </h1>
-            <p className="text-xl lg:text-2xl text-muted-foreground mb-4 font-medium">
-              Computer Science Graduate &{" "}
-              <span className="text-neon-cyan">Software Developer</span>
+            
+            {/* Typing animation for the subtitle */}
+            <p className="text-xl lg:text-2xl text-muted-foreground mb-4 font-medium min-h-[2rem] lg:min-h-[2.5rem]">
+              {loopNum % 3 === 1 ? (
+                <>
+                  {displayText}
+                  <span className="blinking-cursor">|</span>
+                </>
+              ) : (
+                <>
+                  Computer Science Graduate &{" "}
+                  <span className="text-neon-cyan">Software Developer</span>
+                </>
+              )}
             </p>
-            <p className="text-lg text-muted-foreground mb-8 max-w-2xl leading-relaxed">
-              Passionate about creating innovative solutions with expertise in
-              Python, JavaScript, and web development. Ready to contribute to
-              fintech and IT-driven companies.
+            
+            {/* Typing animation for the description */}
+            <p className="text-lg text-muted-foreground mb-8 max-w-2xl leading-relaxed min-h-[6rem]">
+              {loopNum % 3 === 2 ? (
+                <>
+                  {displayText}
+                  <span className="blinking-cursor">|</span>
+                </>
+              ) : (
+                "Passionate about creating innovative solutions with expertise in Python, JavaScript, and web development. Ready to contribute to fintech and IT-driven companies."
+              )}
             </p>
 
             {/* Contact Info */}
@@ -96,7 +172,7 @@ const Hero = () => {
           </div>
 
           {/* Right Content — Phone Image */}
-          <div className="flex-1 flex justify-center lg:justify-end scroll-reveal"style={{animationDelay: "0.3s" }}>
+          <div className="flex-1 flex justify-center lg:justify-end scroll-reveal" style={{animationDelay: "0.3s" }}>
 
             <div className="relative group">
               {/* Glow background */}
@@ -158,6 +234,18 @@ const Hero = () => {
           </button>
         </div>
       </div>
+      
+      <style jsx>{`
+        .blinking-cursor {
+          animation: blink 1s step-end infinite;
+          color: #0ff;
+        }
+        
+        @keyframes blink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0; }
+        }
+      `}</style>
     </section>
   );
 };
