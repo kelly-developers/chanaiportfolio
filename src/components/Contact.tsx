@@ -42,6 +42,17 @@ const Contact = () => {
     }
   ];
 
+  // Function to handle CV download
+  const handleDownloadCV = () => {
+    // Using an anchor tag to trigger download
+    const link = document.createElement('a');
+    link.href = '/docs/kelly_nyachiro_cv.pdf';
+    link.download = 'Kelly_Nyachiro_CV.pdf'; // The filename for download
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <section id="contact" className="py-20 bg-background">
       <div className="container mx-auto px-6">
@@ -154,6 +165,7 @@ const Contact = () => {
                     <Button 
                       variant="outline" 
                       className="w-full gap-2"
+                      onClick={handleDownloadCV}
                     >
                       <Download className="w-4 h-4" />
                       Download CV
